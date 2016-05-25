@@ -38,11 +38,11 @@ contact$firstname[contact$firstname=='Md']<-'Mohammad'
 
 ##define the function to make ids
 make_id <- function(firstname, secondname, name, age, job, location) {
-  prefix <- paste(firstname, secondname, job, location, sep="-") ##This line sets the structure of the ID by pasting name, etc sep by "-"
+  prefix <- paste(firstname, secondname, age, job, location, sep="-") ##This line sets the structure of the ID by pasting name, etc sep by "-"
   #compute the distance matrices
   dist.mat.name1<-adist(firstname)
   dist.mat.name2<-adist(secondname)
-  dist.mat.age<-outer(age, age, '-')
+  dist.mat.age<-abs(outer(age, age, '-'))
   #derive the similarity matrices (entries are "TRUE" or "FALSE"). You can tweak the parameters
   sim1<-dist.mat.name1<2
   sim2<-dist.mat.name2<2|is.na(dist.mat.name2) #na is matched with any name
@@ -59,9 +59,9 @@ make_id <- function(firstname, secondname, name, age, job, location) {
 foo <- contact %>% 
   group_by(job, location, sex, firstletter) %>%
   mutate(
-    id=make_id(firstname, secondname, name, age, job, location),
+    id=make_id(firstname, secondname, name, age, job, location)
     #group_count = n(),
-    num_ids=length(unique(id))
+    #num_ids=length(unique(id))
   )
 
 write.csv(foo, "master_matched_new.csv")
